@@ -1,93 +1,96 @@
 public class AVLTree extends BTreePrinter{
-    Node root;
+    Node root; // โหนดรากของ AVL Tree
 
     public AVLTree(Node root){
-        this.root = root;
+        this.root = root; // กำหนดค่าโหนดรากเมื่อสร้าง AVLTree
     }
     
+    // การหมุนทางซ้ายแบบครั้งเดียวเพื่อรักษาสมดุลของต้นไม้
     public void singleRotateFromLeft(Node y) {
         if (y == null || y.left == null) {
-            return;
+            return; // กรณีที่ y หรือ y.left เป็น null จะไม่ต้องทำการหมุน
         }
-        Node x = y.left;
-        Node w = y.parent;
+        Node x = y.left; // โหนดลูกทางซ้ายของ y
+        Node w = y.parent; // โหนดพ่อแม่ของ y
         
-        y.left = x.right;
+        y.left = x.right; // เลื่อน sub-tree ของ x ด้านขวาไปที่ y ด้านซ้าย
         if (y.left != null) {
-            y.left.parent = y;
+            y.left.parent = y; // อัปเดต parent ของ y.left
         }
         
-        x.right = y;
-        y.parent = x;
+        x.right = y; // ย้าย y ไปเป็นลูกทางขวาของ x
+        y.parent = x; // กำหนด parent ของ y เป็น x
         
         if (w != null) {
             if (w.left == y) {
-                w.left = x;  // x becomes the left child of w
+                w.left = x;  // กรณีที่ y เป็นลูกทางซ้ายของ w ให้เปลี่ยนเป็น x
             } else {
-                w.right = x;  // x becomes the right child of w
+                w.right = x;  // กรณีที่ y เป็นลูกทางขวาของ w ให้เปลี่ยนเป็น x
             }
-            x.parent = w;  // update x's parent to w
-        } else { //y is root
-            root = x;
+            x.parent = w;  // อัปเดต parent ของ x เป็น w
+        } else {
+            root = x; // ในกรณีที่ y เป็น root ให้เปลี่ยน root เป็น x
             x.parent = null;
         }
     }
 
+    // การหมุนทางขวาแบบครั้งเดียวเพื่อรักษาสมดุลของต้นไม้
     public void singleRotateFromRight(Node y) {
        if (y == null || y.right == null) {
-            return;
+            return; // กรณีที่ y หรือ y.right เป็น null จะไม่ต้องทำการหมุน
         }
-        Node x = y.right;
-        Node w = y.parent;
+        Node x = y.right; // โหนดลูกทางขวาของ y
+        Node w = y.parent; // โหนดพ่อแม่ของ y
         
-        y.right = x.left;
+        y.right = x.left; // เลื่อน sub-tree ของ x ด้านซ้ายไปที่ y ด้านขวา
         if (y.right != null) {
-            y.right.parent = y;
+            y.right.parent = y; // อัปเดต parent ของ y.right
         }
         
-        x.left = y;
-        y.parent = x;
+        x.left = y; // ย้าย y ไปเป็นลูกทางซ้ายของ x
+        y.parent = x; // กำหนด parent ของ y เป็น x
         
         if (w != null) {
             if (w.right == y) {
-                w.right = x;  // x becomes the right child of w
+                w.right = x;  // กรณีที่ y เป็นลูกทางขวาของ w ให้เปลี่ยนเป็น x
             } else {
-                w.left = x;  // x becomes the left child of w
+                w.left = x;  // กรณีที่ y เป็นลูกทางซ้ายของ w ให้เปลี่ยนเป็น x
             }
-            x.parent = w;  // update x's parent to w
-        } else { // y is the root
-            root = x;
+            x.parent = w;  // อัปเดต parent ของ x เป็น w
+        } else {
+            root = x; // ในกรณีที่ y เป็น root ให้เปลี่ยน root เป็น x
             x.parent = null;
         }
     }
     
+    // การหมุนสองครั้งจากทางซ้ายเพื่อรักษาสมดุลของต้นไม้
     public void doubleRotateFromLeft(Node y) {
         if (y == null || y.left == null || y.left.right == null) {
-            return;
+            return; // ตรวจสอบว่า y หรือ y.left หรือ y.left.right เป็น null หรือไม่
         }
         
-        Node x = y.left;
-        Node z = x.right;
-        Node w = y.parent;
+        Node x = y.left; // โหนดลูกทางซ้ายของ y
+        Node z = x.right; // โหนดลูกทางขวาของ x
+        Node w = y.parent; // โหนดพ่อแม่ของ y
         
-        // Step 1: Right rotation on y.left (x)
+        // ขั้นตอนที่ 1: หมุนขวาที่ x (โหนดซ้ายของ y)
         x.right = z.left;
         if (x.right != null) {
-            x.right.parent = x; // Update parent reference of the moved subtree
+            x.right.parent = x; // อัปเดต parent ของ x.right
         }
         
         z.left = x;
         x.parent = z;
         
-        // Step 2: Left rotation on y
+        // ขั้นตอนที่ 2: หมุนซ้ายที่ y
         y.left = z.right;
         if (y.left != null) {
-            y.left.parent = y; // Update parent reference
+            y.left.parent = y; // อัปเดต parent ของ y.left
         }
         z.right = y;
         y.parent = z;
 
-        // Update parent references
+        // อัปเดต parent ของ z
         if (w != null) {
             if (w.left == y) {
                 w.left = z;
@@ -101,34 +104,35 @@ public class AVLTree extends BTreePrinter{
         }
     }
 
+    // การหมุนสองครั้งจากทางขวาเพื่อรักษาสมดุลของต้นไม้
     public void doubleRotateFromRight(Node y) {
         if (y == null || y.right == null || y.right.left == null) {
-            return;
+            return; // ตรวจสอบว่า y หรือ y.right หรือ y.right.left เป็น null หรือไม่
         }
 
-        Node x = y.right;  // Right child of y
-        Node z = x.left;   // Left child of x (this will become the new root of this subtree)
-        Node w = y.parent; // Parent of y
+        Node x = y.right;  // โหนดลูกทางขวาของ y
+        Node z = x.left;   // โหนดลูกทางซ้ายของ x
+        Node w = y.parent; // โหนดพ่อแม่ของ y
 
-        // Step 1: Left rotation on y.right (x)
+        // ขั้นตอนที่ 1: หมุนซ้ายที่ x (โหนดขวาของ y)
         x.left = z.right;
         if (x.left != null) {
-            x.left.parent = x; // Update parent reference of the moved subtree
+            x.left.parent = x; // อัปเดต parent ของ x.left
         }
 
         z.right = x;
         x.parent = z;
 
-        // Step 2: Right rotation on y
+        // ขั้นตอนที่ 2: หมุนขวาที่ y
         y.right = z.left;
         if (y.right != null) {
-            y.right.parent = y; // Update parent reference
+            y.right.parent = y; // อัปเดต parent ของ y.right
         }
 
         z.left = y;
         y.parent = z;
 
-        // Update parent references
+        // อัปเดต parent ของ z
         if (w != null) {
             if (w.right == y) {
                 w.right = z;
@@ -141,227 +145,237 @@ public class AVLTree extends BTreePrinter{
             z.parent = null;
         }
     }
+
     
+
+    // ฟังก์ชันสำหรับปรับสมดุล (Rebalance) ของ AVLTree เมื่อใดก็ตามที่โหนดถูกแทรกหรือถูกลบ
     public static void rebalance(AVLTree tree, Node node) {
-        if (node == null) return;
-        int balanceFactor = height(node.left) - height(node.right); // Calculate balanceFactor
-        if (Math.abs(balanceFactor) > 1){                          // Use balanceFactor to check if unbalanced?
+        if (node == null) return; // ถ้าโหนดที่ส่งมาเป็น null ไม่ต้องทำอะไร
+        
+        int balanceFactor = height(node.left) - height(node.right); // คำนวณค่า balance factor ของโหนด
+        if (Math.abs(balanceFactor) > 1){ // ถ้าค่า balance factor มีค่าเกินกว่า 1 แสดงว่าโหนดไม่สมดุล
             if (balanceFactor > 0){ 
-                balanceFactor = height(node.left.left) - height(node.left.right);// Use balanceFactor to check if left heavy?
-                if (balanceFactor > 0){ //Outer
+                balanceFactor = height(node.left.left) - height(node.left.right); // ตรวจสอบว่าเป็นเคส outer หรือ inner
+                if (balanceFactor > 0){ // กรณี outer
                     System.out.println("Perform SingleRotationFromLeft(Node " + node.key + ")");
-                    tree.singleRotateFromLeft(node);
-                }else{ //Inner
+                    tree.singleRotateFromLeft(node); // ทำการหมุนครั้งเดียวจากซ้าย
+                } else { // กรณี inner
                     System.out.println("Perform DoubleRotationFromLeft(Node " + node.key + ")");
-                    tree.doubleRotateFromLeft(node);
+                    tree.doubleRotateFromLeft(node); // ทำการหมุนสองครั้งจากซ้าย
                 }
-            }else{ //right heavy
+            } else { // กรณีที่ต้นไม้หนักไปทางขวา
                 balanceFactor = height(node.right.right) - height(node.right.left);
-                if (balanceFactor > 0){ //Outer
+                if (balanceFactor > 0){ // กรณี outer
                     System.out.println("Perform SingleRotationFromRight(Node " + node.key + ")");
-                    tree.singleRotateFromRight(node);
-                }else{ //Inner
+                    tree.singleRotateFromRight(node); // ทำการหมุนครั้งเดียวจากขวา
+                } else { // กรณี inner
                     System.out.println("Perform DoubleRotationFromRight(Node " + node.key + ")");
-                    tree.doubleRotateFromRight(node);   
+                    tree.doubleRotateFromRight(node);   // ทำการหมุนสองครั้งจากขวา
                 }
             }
         }
     }
     
-    
+    // ฟังก์ชันสำหรับค้นหาโหนดที่มีคีย์ตามที่ต้องการในต้นไม้
     public static Node findKey(Node node, int search_key) {
-         if (node == null) {
-            return null;
+        if (node == null) {
+            return null; // ถ้าโหนดที่รับเข้ามาเป็น null ให้คืนค่า null
         }
         if (node.key == search_key) {
-            return node;
+            return node; // ถ้าพบโหนดที่มีคีย์ตรงกับที่ค้นหา ให้คืนค่าโหนดนั้น
         }
         if (search_key < node.key) {
-            return findKey(node.left, search_key);
+            return findKey(node.left, search_key); // ถ้าคีย์ที่ค้นหาน้อยกว่า ให้ค้นหาที่ sub-tree ทางซ้าย
         } else {
-            return findKey(node.right, search_key);
+            return findKey(node.right, search_key); // ถ้าคีย์ที่ค้นหามากกว่า ให้ค้นหาที่ sub-tree ทางขวา
         }
     }
 
+    // ฟังก์ชันสำหรับค้นหาโหนดที่มีคีย์น้อยที่สุดในต้นไม้
     public static Node findMin(Node node){
-         if (node.left==null){
-            return node;
-        }else{
-            return findMin(node.left);
+         if (node.left == null){
+            return node; // ถ้าไม่มีโหนดทางซ้ายแล้ว แสดงว่าโหนดนี้มีคีย์น้อยที่สุด
+        } else {
+            return findMin(node.left); // ค้นหาโหนดที่มีคีย์น้อยที่สุดทางซ้ายต่อไป
         }
     }
 
+    // ฟังก์ชันสำหรับค้นหาโหนดที่มีคีย์มากที่สุดในต้นไม้
     public static Node findMax(Node node){
-        if (node.right==null){
-            return node;
-        }else{
-            return findMax(node.right);
+        if (node.right == null){
+            return node; // ถ้าไม่มีโหนดทางขวาแล้ว แสดงว่าโหนดนี้มีคีย์มากที่สุด
+        } else {
+            return findMax(node.right); // ค้นหาโหนดที่มีคีย์มากที่สุดทางขวาต่อไป
         }
     }
 
+    // ฟังก์ชันสำหรับแทรกคีย์ใหม่เข้าไปในต้นไม้
     public void insertKey(int key) {
         if (root == null) {
-            root = new Node(key);
+            root = new Node(key); // ถ้าไม่มีโหนดราก ให้สร้างโหนดใหม่เป็นราก
         } else {
-            insertKey(this, root, key);
+            insertKey(this, root, key); // แทรกคีย์ใหม่ในต้นไม้
         }
     }
 
+    // ฟังก์ชันนี้ใช้สำหรับแทรกคีย์ใหม่ลงใน AVLTree ที่มีการตรวจสอบความซ้ำซ้อนและปรับสมดุล
     public static void insertKey(AVLTree tree, Node node, int key) {
         if (key == node.key) {
-            System.out.println("Duplicated key:" + key);
+            System.out.println("Duplicated key:" + key); // แจ้งเตือนเมื่อมีคีย์ซ้ำ
             return;
-        }else if (key < node.key) {//Go left
+        } else if (key < node.key) { // ถ้าคีย์ใหม่มีค่าน้อยกว่า ให้แทรกที่ sub-tree ทางซ้าย
             if (node.left == null) {
                 node.left = new Node(key);
                 node.left.parent = node;
-                rebalance(tree, node);
-            }else {
+                rebalance(tree, node); // ตรวจสอบและปรับสมดุล
+            } else {
                 insertKey(tree, node.left, key);
                 rebalance(tree, node);
             }
-        }else{  // Go right
+        } else {  // ถ้าคีย์ใหม่มีค่ามากกว่า ให้แทรกที่ sub-tree ทางขวา
             if (node.right == null) {
                 node.right = new Node(key);
                 node.right.parent = node;
-                rebalance(tree, node);
-            }else {
+                rebalance(tree, node); // ตรวจสอบและปรับสมดุล
+            } else {
                 insertKey(tree, node.right, key);
                 rebalance(tree, node);
             }
         }
     }
-    
+
+    // ฟังก์ชันสำหรับลบคีย์ออกจาก AVLTree
     public void deleteKey(int key) {
         if (root == null) {
-            System.out.println("Empty Tree!!!"); 
+            System.out.println("Empty Tree!!!"); // แจ้งเตือนเมื่อต้นไม้เป็นค่าว่าง
         } else {
-            Node delete = findKey(root, key); 
+            Node delete = findKey(root, key); // ค้นหาโหนดที่จะลบ
             if (delete == null) {
-                System.out.println("Key not found!!!");
+                System.out.println("Key not found!!!"); // แจ้งเตือนเมื่อไม่พบคีย์ที่ต้องการลบ
             } else {
                 if (delete != root) {
-                    deleteKey(this, delete);
+                    deleteKey(this, delete); // ลบโหนดที่ไม่ใช่ root
                 } else {
                     if (delete.left == null && delete.right == null) {
-                        delete = null;
-                    } 
-                    else if (delete.left == null) {
-                        delete = delete.right; 
-                    } 
-                    else if (delete.right == null) {
-                        delete = delete.left; 
-                    } 
-                    else {
+                        delete = null; // ถ้าโหนดไม่มีลูกทางซ้ายและขวา ให้ลบได้ทันที
+                    } else if (delete.left == null) {
+                        delete = delete.right; // ถ้าไม่มีลูกทางซ้าย ให้เลื่อนลูกทางขวาขึ้นมาแทน
+                    } else if (delete.right == null) {
+                        delete = delete.left; // ถ้าไม่มีลูกทางขวา ให้เลื่อนลูกทางซ้ายขึ้นมาแทน
+                    } else {
                         Node deleteLastCase = findMin(delete.right);
-                        delete.key = deleteLastCase.key; 
+                        delete.key = deleteLastCase.key; // ใช้ค่าของโหนดที่น้อยที่สุดจาก sub-tree ด้านขวา
                         deleteKey(this, deleteLastCase); 
                     }
-                    root = delete; 
+                    root = delete; // กำหนดค่า root ใหม่
                 }
             }
         }
     }
-    
-    public static void deleteKey(AVLTree tree, Node node){
-        if (node.left == null && node.right == null) {
+
+    // ฟังก์ชันนี้ใช้สำหรับลบโหนดจากต้นไม้ AVL พร้อมกับการปรับสมดุล
+    public static void deleteKey(AVLTree tree, Node node) {
+        if (node.left == null && node.right == null) { // กรณีที่โหนดไม่มีลูกทั้งสองด้าน
             if (node.key < node.parent.key) {
-                node.parent.left = null; // 1. 
+                node.parent.left = null; // ลบโหนดฝั่งซ้ายของ parent
             } else {
-                node.parent.right = null; // 2.
+                node.parent.right = null; // ลบโหนดฝั่งขวาของ parent
             }
-        } 
-        else if (node.left == null) {
+        } else if (node.left == null) { // กรณีที่โหนดไม่มีลูกทางซ้าย
             if (node.key < node.parent.key) {
-                node.parent.left = node.right; // 3.
+                node.parent.left = node.right; // ย้ายโหนดทางขวาขึ้นแทนที่
             } else {
-                node.parent.right = node.right; // 4.
+                node.parent.right = node.right;
             }
             node.right.parent = node.parent;
-        } 
-        else if (node.right == null) {
+        } else if (node.right == null) { // กรณีที่โหนดไม่มีลูกทางขวา
             if (node.key < node.parent.key) {
-                node.parent.left = node.left; // 5. 
+                node.parent.left = node.left; 
             } else {
-                node.parent.right = node.left; // 6. 
+                node.parent.right = node.left; 
             }
             node.left.parent = node.parent; 
-        } 
-        // 7.
-        else {
+        } else { // กรณีที่โหนดมีลูกทั้งสองด้าน
             Node delete = findMin(node.right); 
             node.key = delete.key; 
             deleteKey(tree, delete); 
         }  
-        Node current = node.parent; // Start from the parent of the deleted node
+        
+        Node current = node.parent; // เริ่มตรวจสอบที่โหนด parent ของโหนดที่ถูกลบ
         while (current != null) {
-            rebalance(tree, current); // Rebalance the current node
-            current = current.parent; // Move up to the parent
+            rebalance(tree, current); // ปรับสมดุลของโหนดปัจจุบัน
+            current = current.parent; // เลื่อนขึ้นไปตรวจสอบที่โหนด parent
         }
     }
-    
+
+    // ฟังก์ชันสำหรับตรวจสอบว่าโหนด r1 และ r2 สามารถรวมเข้าด้วยกันได้หรือไม่
     public static boolean isMergeable(Node r1, Node r2) {
-        if (r1 == null && r2 != null) return true;
-        if (r1 != null && r2 == null) return true;
-        if (findMax(r1).key < findMin(r2).key){
-            return true;
-        }else return false; 
+        if (r1 == null && r2 != null) return true; // ถ้า r1 เป็น null และ r2 ไม่เป็น null สามารถรวมได้
+        if (r1 != null && r2 == null) return true; // ถ้า r1 ไม่เป็น null และ r2 เป็น null สามารถรวมได้
+        if (findMax(r1).key < findMin(r2).key) {   // ตรวจสอบว่าค่าใน r1 น้อยกว่าค่าใน r2
+            return true; // ถ้าใช่ แสดงว่าสามารถรวมกันได้
+        } else {
+            return false; // ถ้าไม่ใช่ ไม่สามารถรวมกันได้
+        }
     }
 
+    // ฟังก์ชันสำหรับรวมโหนด r1 และ r2 เข้ากับโหนด t เป็นโหนดรากใหม่
     public static Node mergeWithRoot(Node r1, Node r2, Node t) {
-        if(r1 == null && r2 == null) return t;
-        if (isMergeable(r1, r2)) {
-            if (Math.abs(height(r1) - height(r2)) <= 1) {
+        if (r1 == null && r2 == null) return t; // ถ้า r1 และ r2 เป็น null ให้คืนค่า t
+        if (isMergeable(r1, r2)) { // ตรวจสอบว่า r1 และ r2 สามารถรวมกันได้หรือไม่
+            if (Math.abs(height(r1) - height(r2)) <= 1) { // ถ้าความสูงต่างกันไม่เกิน 1
                 t.left = r1;
                 t.right = r2;
-                return t; 
+                return t; // คืนค่าโหนด t ที่มีลูกซ้ายเป็น r1 และลูกขวาเป็น r2
             } else if (height(r1) > height(r2)) {
-                Node r = mergeWithRoot(r1.right, r2, t);
+                Node r = mergeWithRoot(r1.right, r2, t); // รวม r1 ด้านขวาและ r2 กับ t
                 r1.right = r;
                 r.parent = r1;
-                AVLTree tree = new AVLTree(r1);
-                rebalance(tree, r1);
+                AVLTree tree = new AVLTree(r1); // สร้างต้นไม้ใหม่
+                rebalance(tree, r1); // ปรับสมดุลของ r1
                 return tree.root;
             } else {
-                Node r = mergeWithRoot(r1, r2.left, t);
-                r2.left = r; 
+                Node r = mergeWithRoot(r1, r2.left, t); // รวม r1 และ r2 ด้านซ้ายกับ t
+                r2.left = r;
                 r.parent = r2;
-                AVLTree tree = new AVLTree(r2);
-                rebalance(tree, r2);
+                AVLTree tree = new AVLTree(r2); // สร้างต้นไม้ใหม่
+                rebalance(tree, r2); // ปรับสมดุลของ r2
                 return tree.root;
             }
         } else {
             System.out.println("All nodes in T1 must be smaller than all nodes from T2");
-            return null;
+            return null; // คืนค่า null เมื่อไม่สามารถรวมกันได้
         }
     }
     
+    // ฟังก์ชันสำหรับรวมต้นไม้ AVLTree ปัจจุบันเข้ากับต้นไม้ AVLTree อื่น
     public void merge(AVLTree tree2) {
-        if (isMergeable(this.root, tree2.root)){
-            Node t = new Node(findMax(this.root).key);
-            this.deleteKey(t.key);
-            this.root = mergeWithRoot(this.root, tree2.root, t);
-        }else{
+        if (isMergeable(this.root, tree2.root)) { // ตรวจสอบว่าต้นไม้สองต้นสามารถรวมกันได้หรือไม่
+            Node t = new Node(findMax(this.root).key); // สร้างโหนดใหม่ t โดยใช้ค่า key ที่มากที่สุดจาก root
+            this.deleteKey(t.key); // ลบค่า t ออกจากต้นไม้เดิม
+            this.root = mergeWithRoot(this.root, tree2.root, t); // รวมต้นไม้ปัจจุบันกับ tree2 โดยมี t เป็น root ใหม่
+        } else {
             System.out.println("All nodes in T1 must be smaller than all nodes from T2");
         }
     }
 
-    // This function is complete, no need to edit
-    public static int height(Node node){
+    // ฟังก์ชันสำหรับคำนวณความสูงของโหนด
+    public static int height(Node node) {
         if (node == null)
-            return -1;
+            return -1; // ถ้าโหนดเป็น null ให้คืนค่า -1
         else
-            return 1 + Math.max(height(node.left), height(node.right));
+            return 1 + Math.max(height(node.left), height(node.right)); // คืนค่าความสูงของโหนด
     }
 
-    // This function is complete, no need to edit
+    // ฟังก์ชันสำหรับพิมพ์โครงสร้างของต้นไม้ AVLTree โดยใช้วิธีการของคลาส BTreePrinter
     public void printTree() {
         if (root == null) {
-            System.out.println("Empty tree!!!");
+            System.out.println("Empty tree!!!"); // แจ้งเตือนเมื่อต้นไม้เป็นค่าว่าง
         } else {
-            super.printTree(root);
+            super.printTree(root); // เรียกใช้เมธอด printTree จากคลาส BTreePrinter
         }
     }
     
-    public AVLTree() {} // Dummy Constructor, no need to edit
+    public AVLTree() {} // Constructor เปล่า สำหรับสร้าง AVLTree แบบไม่มีค่าเริ่มต้น
 }
+
